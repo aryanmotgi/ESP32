@@ -1,0 +1,51 @@
+# Classic ESP32 CSI Node — Target overlay
+#
+# Auto-applied by ESP-IDF when CONFIG_IDF_TARGET=esp32.
+# Layered on top of sdkconfig.defaults — only the differences live here.
+#
+# Build:
+#   idf.py -B build-esp32 -D IDF_TARGET=esp32 -D SDKCONFIG=build-esp32/sdkconfig \
+#       -D SDKCONFIG_DEFAULTS="sdkconfig.defaults;sdkconfig.defaults.esp32" build
+#
+# Hardware: ESP32-D0WD-V3, 4MB flash, no PSRAM. Headless — no display,
+# no WASM (needs PSRAM). Legacy CSI path only (no WiFi 6).
+
+# ── Target ──
+CONFIG_IDF_TARGET="esp32"
+
+# ── Flash & partitions (4 MB, OTA-capable — same layout as C6/C5) ──
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions_4mb.csv"
+CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y
+CONFIG_ESPTOOLPY_FLASHSIZE="4MB"
+
+# Classic ESP32 has no native USB; console is the UART0 bridge chip.
+CONFIG_ESP_CONSOLE_UART_DEFAULT=y
+# CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG is not set
+# CONFIG_ESP_CONSOLE_SECONDARY_USB_SERIAL_JTAG is not set
+
+# ── CSI (required) ──
+CONFIG_ESP_WIFI_CSI_ENABLED=y
+
+# ── No display, no WASM (both need PSRAM) ──
+# CONFIG_DISPLAY_ENABLE is not set
+# CONFIG_WASM_ENABLE is not set
+
+# No standard WS2812 LED pin on classic ESP32; disable visualizer.
+# CONFIG_LED_GAMMA_VIZ is not set
+
+# ── Compiler ──
+CONFIG_COMPILER_OPTIMIZATION_SIZE=y
+
+# ── Logging ──
+CONFIG_BOOTLOADER_LOG_LEVEL_WARN=y
+CONFIG_LOG_DEFAULT_LEVEL_INFO=y
+
+# ── FreeRTOS / main task stacks — same bumps as S3/C6 (ADR-081 adaptive
+# controller runs network I/O from Timer Svc callbacks) ──
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=8192
+CONFIG_FREERTOS_TIMER_TASK_STACK_DEPTH=8192
+
+# ── Power: classic ESP32-D0WD-V3 single/dual-core ceiling ──
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ=240
