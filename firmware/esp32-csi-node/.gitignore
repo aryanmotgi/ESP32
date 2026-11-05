@@ -1,0 +1,15 @@
+# ESP-IDF build output. Each target gets its own -B build-<target> dir
+# (see README build commands); none of it belongs in version control.
+build/
+build-*/
+sdkconfig
+sdkconfig.old
+managed_components/
+dependencies.lock
+nvs_config.csv
+nvs.bin
+# compiled host-test binaries
+test/test_*[!.cpy]
+test/fuzz_serialize
+test/fuzz_edge
+test/fuzz_nvs
